@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace PersonalTools.Data.Entities
 {
-    class UserEntity
+    public class UserEntity
     {
+        public string UserId { get; set; }
     }
 }

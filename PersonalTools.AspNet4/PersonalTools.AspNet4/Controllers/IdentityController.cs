@@ -12,9 +12,23 @@ namespace PersonalTools.AspNet4.Controllers
 {
     public class IdentityController : Controller
     {
-        public ActionResult Index()
+        [HttpGet]
+        public async Task<ActionResult> Index()
         {
-            return View();
+            var bll = new IdentityBLL();
+
+            var identities = await bll.FindAll();
+
+            return View(identities);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> Save(IdentityEntity entity)
+        {
+            var bll = new IdentityBLL();
+            await bll.Insert(entity);
+
+            return null;
         }
     }
 }

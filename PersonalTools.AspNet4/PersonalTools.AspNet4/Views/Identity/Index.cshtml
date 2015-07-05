@@ -1,8 +1,10 @@
-﻿@{
+﻿@model IEnumerable<PersonalTools.Data.Entities.IdentityEntity>
+
+@{
     ViewBag.Title = "Identities";
 }
 
-<div ng-controller="IdentityCtrl">
+<div ng-controller="IdentityCtrl" ng-init="load()">
     <section>
         <h1 class="page-header">Identities</h1>
         <p class="text-muted">
@@ -17,40 +19,21 @@
                     <td>交易密码</td>
                     <td>网站</td>
                     <td>备注</td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>南京文交所</td>
-                    <td>3021061000123</td>
-                    <td>09</td>
-                    <td>05</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>南京文交所</td>
-                    <td>3021061000123</td>
-                    <td>09</td>
-                    <td>05</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>南京文交所</td>
-                    <td>3021061000123</td>
-                    <td>09</td>
-                    <td>05</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>南京文交所</td>
-                    <td>3021061000123</td>
-                    <td>09</td>
-                    <td>05</td>
-                    <td></td>
-                    <td></td>
+                <tr ng-repeat="identity in identities">
+                    <td>{{identity.ThirdPartyName}}</td>
+                    <td>{{identity.LoginName}}</td>
+                    <td>{{identity.Password}}</td>
+                    <td>{{identity.TradePassword}}</td>
+                    <td>{{identity.Website}}</td>
+                    <td>{{identity.Comments}}</td>
+                    <td>
+                        <button class="btn btn-default" ng-click="edit(identity)">修改</button>
+                        <button class="btn btn-default" ng-click="delete(identity)">删除</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -68,38 +51,37 @@
             <div class="form-group">
                 <label for="thirdPartyName" class="col-sm-2 control-label">App名称</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="thirdPartyName" id="thirdPartyName" ng-model="ThirdPartyName">
+                    <input class="form-control" name="thirdPartyName" id="thirdPartyName" ng-model="identity.ThirdPartyName">
                 </div>
             </div>
             <div class="form-group">
                 <label for="loginName" class="col-sm-2 control-label">用户名</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="loginName" id="loginName" ng-model="LoginName">
+                    <input class="form-control" name="loginName" id="loginName" ng-model="identity.LoginName">
                 </div>
             </div>
             <div class="form-group">
                 <label for="password" class="col-sm-2 control-label">登录密码</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="password" id="password" ng-model="Password">
+                    <input class="form-control" name="password" id="password" ng-model="identity.Password">
                 </div>
             </div>
             <div class="form-group">
                 <label for="tradePassword" class="col-sm-2 control-label">交易密码</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="tradePassword" id="tradePassword" ng-model="TradePassword">
+                    <input class="form-control" name="tradePassword" id="tradePassword" ng-model="identity.TradePassword">
                 </div>
             </div>
             <div class="form-group">
                 <label for="website" class="col-sm-2 control-label">网址</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="website" id="website" ng-model="Website">
+                    <input class="form-control" name="website" id="website" ng-model="identity.Website">
                 </div>
             </div>
             <div class="form-group">
                 <label for="comments" class="col-sm-2 control-label">备注</label>
                 <div class="col-sm-10">
-                    
-                    <input class="form-control" name="website" id="website" ng-model="Website">
+                    <textarea class="form-control" name="comments" id="comments" ng-model="identity.Comments" rows="3"></textarea>
                 </div>
             </div>
         </form>
@@ -115,6 +97,10 @@
         var app = angular.module('ngApp', ['ui.bootstrap']);
 
         app.controller('IdentityCtrl', function ($scope, $modal) {
+            $scope.load = function () {
+                $scope.identities  = @Html.Raw(Json.Encode(Model));
+            };
+
             $scope.insert = function () {
                 $scope.edit();
             };
@@ -131,19 +117,25 @@
                     }
                 });
 
-                //modalInstance.result.then(function (selectedItem) {
-                //    $scope.selected = selectedItem;
-                //}, function () {
-                //    $log.info('Modal dismissed at: ' + new Date());
-                //});
+                modalInstance.result.then(function (identity) {
+                    $scope.identities.push(identity);
+                });
+            };
+
+            $scope.delete = function(identity){
+
             };
         });
 
-        app.controller('IdentityEditCtrl', function ($scope, $modalInstance, identity) {
+        app.controller('IdentityEditCtrl', function ($scope, $http, $modalInstance, identity) {
             $scope.action = '添加';
+            $scope.identity = identity;
 
             $scope.ok = function () {
-                $modalInstance.dismiss();
+                $http.post('/identity/save', $scope.identity).
+                    success(function (data) {
+                        $modalInstance.close($scope.identity);
+                    });
             };
 
             $scope.cancel = function () {

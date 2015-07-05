@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PersonalTools.BLL
 {
-    public class BaseBLL<T> where T: new()
+    public class BaseBLL<T> where T : new()
     {
         protected IMongoDatabase _database;
         protected IMongoCollection<T> _collection;
@@ -20,20 +20,24 @@ namespace PersonalTools.BLL
             _collection = _database.GetCollection<T>(collectionName);
         }
 
-        public async virtual Task FindAll()
+        public async virtual Task<List<T>> FindAll()
         {
-            var documents = await _collection.Find(new BsonDocument()).ToListAsync();
+            return await _collection.Find(new BsonDocument()).ToListAsync();
+        }
 
+        public async virtual Task<T> FindById(string id)
+        {
+            return await _collection.Find(Builders<T>.Filter.Eq("id", id)).SingleOrDefaultAsync();
         }
 
         //public virtual FindById(string id)
         //{
-            
+
         //    var filter = Builders<T>.Filter.Eq("_id","");
         //    return _collection.FindAsync();
         //}
 
-        public async virtual Task Insert(T entity) 
+        public async virtual Task Insert(T entity)
         {
             await _collection.InsertOneAsync(entity);
         }

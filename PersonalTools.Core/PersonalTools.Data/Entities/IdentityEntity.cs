@@ -15,10 +15,14 @@ namespace PersonalTools.Data.Entities
 
         public string ThirdPartyName { get; set; }
 
-        public string ThirdPartyLoginName { get; set; }
+        public string LoginName { get; set; }
 
-        public string ThirdPartyPassword { get; set; }
+        public string Password { get; set; }
 
-        public string ThirdPartyTradePassword { get; set; }
+        public string TradePassword { get; set; }
+
+        public string Website { get; set; }
+
+        public string Comments { get; set; }
     }
 }

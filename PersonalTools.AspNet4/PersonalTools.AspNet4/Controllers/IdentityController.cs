@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace PersonalTools.AspNet4.Controllers
 {
-    public class HomeController : Controller
+    public class IdentityController : Controller
     {
         public ActionResult Index()
         {

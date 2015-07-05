@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PersonalTools.Data
 {
-    public class DataStore : IDisposable
+    public class DataStore
     {
         private static Lazy<DataStore> _instance;
 
@@ -53,11 +53,6 @@ namespace PersonalTools.Data
             }
 
             _instance = new Lazy<DataStore>(() => new DataStore(databaseName, settings));
-        }
-
-        public void Dispose()
-        {
-            // Nothing
         }
     }
 }

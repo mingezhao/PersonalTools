@@ -1,0 +1,154 @@
+﻿@{
+    ViewBag.Title = "Identities";
+}
+
+<div ng-controller="IdentityCtrl">
+    <section>
+        <h1 class="page-header">Identities</h1>
+        <p class="text-muted">
+            <button class="btn btn-default" ng-click="insert()">添加</button>
+        </p>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <td>名称</td>
+                    <td>用户名</td>
+                    <td>密码</td>
+                    <td>交易密码</td>
+                    <td>网站</td>
+                    <td>备注</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>南京文交所</td>
+                    <td>3021061000123</td>
+                    <td>09</td>
+                    <td>05</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>南京文交所</td>
+                    <td>3021061000123</td>
+                    <td>09</td>
+                    <td>05</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>南京文交所</td>
+                    <td>3021061000123</td>
+                    <td>09</td>
+                    <td>05</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>南京文交所</td>
+                    <td>3021061000123</td>
+                    <td>09</td>
+                    <td>05</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+
+</div>
+<script type="text/ng-template" id="modalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">{{action}}</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="thirdPartyName" class="col-sm-2 control-label">App名称</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="thirdPartyName" id="thirdPartyName" ng-model="ThirdPartyName">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="loginName" class="col-sm-2 control-label">用户名</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="loginName" id="loginName" ng-model="LoginName">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">登录密码</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="password" id="password" ng-model="Password">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tradePassword" class="col-sm-2 control-label">交易密码</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="tradePassword" id="tradePassword" ng-model="TradePassword">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="website" class="col-sm-2 control-label">网址</label>
+                <div class="col-sm-10">
+                    <input class="form-control" name="website" id="website" ng-model="Website">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="comments" class="col-sm-2 control-label">备注</label>
+                <div class="col-sm-10">
+                    
+                    <input class="form-control" name="website" id="website" ng-model="Website">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
+@section scripts
+{
+    <script>
+        var app = angular.module('ngApp', ['ui.bootstrap']);
+
+        app.controller('IdentityCtrl', function ($scope, $modal) {
+            $scope.insert = function () {
+                $scope.edit();
+            };
+
+            $scope.edit = function (identity) {
+
+                var modalInstance = $modal.open({
+                    templateUrl: 'modalContent.html',
+                    controller: 'IdentityEditCtrl',
+                    resolve: {
+                        identity: function () {
+                            return identity;
+                        }
+                    }
+                });
+
+                //modalInstance.result.then(function (selectedItem) {
+                //    $scope.selected = selectedItem;
+                //}, function () {
+                //    $log.info('Modal dismissed at: ' + new Date());
+                //});
+            };
+        });
+
+        app.controller('IdentityEditCtrl', function ($scope, $modalInstance, identity) {
+            $scope.action = '添加';
+
+            $scope.ok = function () {
+                $modalInstance.dismiss();
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss();
+            };
+        });
+    </script>
+}

@@ -1,4 +1,6 @@
-﻿var directiveApp = angular.module('hs.validate', []);
+﻿angular.module('happy.suits', ['hs.validate']);
+
+var directiveApp = angular.module('hs.validate', []);
 
 /**
  * Password Directive
@@ -160,13 +162,12 @@ directiveApp.directive('hsValidateResult', function () {
     return {
         restrict: 'A',
         compile: function (element, attrs) {
-
-            if (!angular.isUndefined(attrs.nfcValidateResult)) {
+            if (!angular.isUndefined(attrs.hsValidateResult)) {
                 // Define variables
                 var formName = element.parents('form:first').attr('name');
                 var tagetElementName = attrs.name;
                 var insertInvalidMessageElement = function (formName, targetElementName, errorType, message) {
-                    element.after('<div class="ng-invalid-message" ng-show="' + formName + '.' + targetElementName + '.$error.' + errorType + '">' + message + '</div>');
+                    element.after('<div class="ng-invalid-message" ng-show="(' + formName + '.' + targetElementName + '.$dirty || ' + formName + '.$submitted) && ' + formName + '.' + targetElementName + '.$error.' + errorType + '">' + message + '</div>');
                 }
 
                 // Required
@@ -210,6 +211,50 @@ directiveApp.directive('hsValidateResult', function () {
                     insertInvalidMessageElement(formName, tagetElementName, 'compareTo', 'Must match the previous entry');
                 }
             }
+        }
+    };
+});
+
+/**
+ * hsButtonSubmit Directive
+ * 主要针对Button在Form外面
+ * Element Example: <input type="button" hs-button-submit="{form:'editForm', fn:'save()'}"/>
+ * Required Attributes: 
+ *      hs-button-submit
+ */
+directiveApp.directive('hsButtonSubmit', function ($parse, $document) {
+    return {
+        restrict: 'A',
+        compile: function ($element, attr) {
+            var option = eval('(' + attr.hsButtonSubmit + ')');
+            var fn = $parse(option.fn, /* interceptorFn */ null, /* expensiveChecks */ true);
+            return function ngEventHandler(scope, element) {
+                element.on('click', function (event) {
+                    var callback = function () {
+                        var form = scope[option.form];
+
+                        // 设置Form状态为Submitted
+                        form.$setSubmitted(true);
+
+                        if (form.$valid) {
+                            fn(scope, { $event: event });
+                        }
+                        else {
+                            // 为First Invalid Element获取焦点
+                            var isGetFirstInvalidElement = false;
+                            angular.forEach(form.$error, function (value, key) {
+                                if (!isGetFirstInvalidElement) {
+                                    var invalidElementName = form.$error[key][0].$name;
+                                    $document.find('[name="' + invalidElementName + '"]').focus();
+                                    isGetFirstInvalidElement = true;
+                                }
+                            });
+                        }
+                    };
+
+                    scope.$apply(callback());
+                });
+            };
         }
     };
 });

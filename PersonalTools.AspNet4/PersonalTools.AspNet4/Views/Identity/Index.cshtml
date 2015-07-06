@@ -46,19 +46,19 @@
             <div class="form-group">
                 <label for="thirdPartyName" class="col-sm-2 control-label">App名称</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="thirdPartyName" id="thirdPartyName" ng-model="identity.ThirdPartyName" required hsvalidateresult>
+                    <input class="form-control" name="thirdPartyName" id="thirdPartyName" ng-model="identity.ThirdPartyName" required hs-validate-result>
                 </div>
             </div>
             <div class="form-group">
                 <label for="loginName" class="col-sm-2 control-label">用户名</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="loginName" id="loginName" ng-model="identity.LoginName">
+                    <input class="form-control" name="loginName" id="loginName" ng-model="identity.LoginName" required hs-validate-result>
                 </div>
             </div>
             <div class="form-group">
                 <label for="password" class="col-sm-2 control-label">登录密码</label>
                 <div class="col-sm-10">
-                    <input class="form-control" name="password" id="password" ng-model="identity.Password">
+                    <input class="form-control" name="password" id="password" ng-model="identity.Password" required hs-validate-result>
                 </div>
             </div>
             <div class="form-group">
@@ -80,16 +80,17 @@
                 </div>
             </div>
         </form>
+        
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="save(editForm.$valid)">Save</button>
+        <button class="btn btn-primary" hs-button-submit="{form:'editForm', fn:'save()'}">Save</button>
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </script>
 @section scripts
 {
     <script>
-        var app = angular.module('ngApp', ['ui.bootstrap']);
+        var app = angular.module('ngApp', ['ui.bootstrap', 'hs.validate']);
 
         app.controller('IdentityCtrl', function ($scope, $http, $modal) {
 
@@ -130,13 +131,13 @@
                     if(action == 'insert'){
                         $scope.identities.push(identity);
                     }
-                    else{
-                        angular.forEach($scope.identities, function(value, index){
-                            if(value.Id == identity.Id){
+                    else {
+                        angular.forEach($scope.identities, function(value, index) {
+                            if (value.Id == identity.Id) {
                                 $scope.identities[index] = identity;
                                 return;
                             }
-                        })
+                        });
                     }
                 });
             };
@@ -144,13 +145,13 @@
             $scope.delete = function(identity){
                 $http.post('/identity/delete', {Id: identity.Id}).
                     success(function (data) {
-                        angular.forEach($scope.identities, function(value, index){
-                            if(value.Id == identity.Id){
-                                $scope.identities.splice(index, 1);
-                                return;
-                            }
-                        })
+                    angular.forEach($scope.identities, function(value, index) {
+                        if (value.Id == identity.Id) {
+                            $scope.identities.splice(index, 1);
+                            return;
+                        }
                     });
+                });
             };
         });
 
@@ -158,9 +159,8 @@
             $scope.action = action;
             $scope.identity = identity;
 
-            $scope.save = function (isValid) {
-                if(isValid){
-                    $http.post('/identity/save', $scope.identity).
+            $scope.save = function () {
+                $http.post('/identity/save', $scope.identity).
                     success(function (data) {
                         $scope.identity.Id = data;
                         $modalInstance.close({
@@ -168,7 +168,6 @@
                             action: action
                         });
                     });
-                }
             };
 
             $scope.cancel = function () {

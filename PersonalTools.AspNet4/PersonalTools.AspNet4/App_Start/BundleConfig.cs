@@ -13,7 +13,7 @@ namespace PersonalTools.AspNet4
 
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                         "~/Scripts/angular.js",
-                        "~/Scripts/angular-happysuits/happysuits.js"));
+                        "~/Scripts/angular-happy-suits/happy-suits.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/angular-ui/ui-bootstrap.js",

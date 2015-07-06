@@ -1,14 +1,12 @@
 ﻿@model IEnumerable<PersonalTools.Data.Entities.IdentityEntity>
-
 @{
     ViewBag.Title = "Identities";
 }
-
 <div ng-controller="IdentityCtrl" ng-init="load()">
     <section>
         <h1 class="page-header">Identities</h1>
         <p class="text-muted">
-            <button class="btn btn-default" ng-click="insert()">添加</button>
+            <button class="btn btn-primary" ng-click="insert()">添加</button>
         </p>
         <table class="table table-bordered table-hover">
             <thead>
@@ -30,21 +28,18 @@
                     <td>{{identity.TradePassword}}</td>
                     <td>{{identity.Website}}</td>
                     <td>{{identity.Comments}}</td>
-                    <td>
-                        <button class="btn btn-default" ng-click="edit(identity)">修改</button>
-                        <button class="btn btn-default" ng-click="delete(identity)">删除</button>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-xs" ng-click="edit(identity)" title="修改"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-danger btn-xs" ng-click="delete(identity)" title="删除"><i class="glyphicon glyphicon-remove"></i></button>
                     </td>
                 </tr>
             </tbody>
         </table>
     </section>
-
-
-
 </div>
 <script type="text/ng-template" id="modalContent.html">
     <div class="modal-header">
-        <h3 class="modal-title">{{action}}</h3>
+        <h3 class="modal-title">{{action == 'insert' ? '添加' : '修改'}}</h3>
     </div>
     <div class="modal-body">
         <form class="form-horizontal">
@@ -87,7 +82,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-primary" ng-click="save()">Save</button>
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </script>
@@ -96,7 +91,8 @@
     <script>
         var app = angular.module('ngApp', ['ui.bootstrap']);
 
-        app.controller('IdentityCtrl', function ($scope, $modal) {
+        app.controller('IdentityCtrl', function ($scope, $http, $modal) {
+
             $scope.load = function () {
                 $scope.identities  = @Html.Raw(Json.Encode(Model));
             };
@@ -106,35 +102,70 @@
             };
 
             $scope.edit = function (identity) {
+                var action;
+                if(angular.isUndefined(identity)){
+                    action = 'insert';
+                }
+                else{
+                    action = 'edit';
+                }
 
                 var modalInstance = $modal.open({
                     templateUrl: 'modalContent.html',
                     controller: 'IdentityEditCtrl',
                     resolve: {
                         identity: function () {
-                            return identity;
+                            return angular.copy(identity);
+                        },
+                        action: function(){
+                            return action;
                         }
                     }
                 });
 
-                modalInstance.result.then(function (identity) {
-                    $scope.identities.push(identity);
+                modalInstance.result.then(function (data) {
+                    var identity = data.identity;
+                    var action = data.action;
+
+                    if(action == 'insert'){
+                        $scope.identities.push(identity);
+                    }
+                    else{
+                        angular.forEach($scope.identities, function(value, index){
+                            if(value.Id == identity.Id){
+                                $scope.identities[index] = identity;
+                                return;
+                            }   
+                        })
+                    }
                 });
             };
 
             $scope.delete = function(identity){
-
+                $http.post('/identity/delete', {Id: identity.Id}).
+                    success(function (data) {
+                        angular.forEach($scope.identities, function(value, index){
+                            if(value.Id == identity.Id){
+                                $scope.identities.splice(index, 1);
+                                return;
+                            }   
+                        })
+                    });
             };
         });
 
-        app.controller('IdentityEditCtrl', function ($scope, $http, $modalInstance, identity) {
-            $scope.action = '添加';
+        app.controller('IdentityEditCtrl', function ($scope, $http, $modalInstance, identity, action) {
+            $scope.action = action;
             $scope.identity = identity;
 
-            $scope.ok = function () {
+            $scope.save = function () {
                 $http.post('/identity/save', $scope.identity).
                     success(function (data) {
-                        $modalInstance.close($scope.identity);
+                        $scope.identity.Id = data;
+                        $modalInstance.close({
+                            identity: $scope.identity,
+                            action: action
+                        });
                     });
             };
 

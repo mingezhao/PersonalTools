@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PersonalTools.Data.Entities
+namespace PersonalTools.Data
 {
-    public class UserEntity : IEntity
+    public interface IEntity
     {
-        public string Id { get; set; }
+        string Id { get; set; }
     }
 }

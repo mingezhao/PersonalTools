@@ -26,9 +26,25 @@ namespace PersonalTools.AspNet4.Controllers
         public async Task<JsonResult> Save(IdentityEntity entity)
         {
             var bll = new IdentityBLL();
-            await bll.Insert(entity);
 
-            return null;
+            if (string.IsNullOrEmpty(entity.Id))
+            {
+                await bll.Insert(entity);
+            }
+            else
+            {
+                await bll.Update(entity);
+            }
+
+            return Json(entity.Id, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task Delete(string Id)
+        {
+            var bll = new IdentityBLL();
+
+            await bll.Delete(Id);
         }
     }
 }

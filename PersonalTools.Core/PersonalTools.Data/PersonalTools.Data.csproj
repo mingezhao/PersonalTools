@@ -54,6 +54,7 @@
     <Compile Include="DataStore.cs" />
     <Compile Include="Entities\IdentityEntity.cs" />
     <Compile Include="Entities\UserEntity.cs" />
+    <Compile Include="IEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

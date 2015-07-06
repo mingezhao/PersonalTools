@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PersonalTools.Data.Entities
 {
-    public class IdentityEntity
+    public class IdentityEntity : IEntity
     {
         [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
         public string Id { get; set; }

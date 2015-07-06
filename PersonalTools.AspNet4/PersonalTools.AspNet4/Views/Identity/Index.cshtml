@@ -92,16 +92,20 @@
     <script>
         var app = angular.module('ngApp', ['ui.bootstrap', 'hs.validate']);
 
+        // Identity Ctrl
         app.controller('IdentityCtrl', function ($scope, $http, $modal) {
 
+            // Load data
             $scope.load = function () {
                 $scope.identities  = @Html.Raw(Json.Encode(Model));
             };
 
+            // Show modal for inserting
             $scope.insert = function () {
                 $scope.edit();
             };
 
+            // Show modal for editting
             $scope.edit = function (identity) {
                 var action;
                 if(angular.isUndefined(identity)){
@@ -111,6 +115,7 @@
                     action = 'edit';
                 }
 
+                // Open modal
                 var modalInstance = $modal.open({
                     templateUrl: 'modalContent.html',
                     controller: 'IdentityEditCtrl',
@@ -124,14 +129,17 @@
                     }
                 });
 
+                // Update list after save data and close modal
                 modalInstance.result.then(function (data) {
                     var identity = data.identity;
                     var action = data.action;
 
                     if(action == 'insert'){
+                        // Insert new record into list
                         $scope.identities.push(identity);
                     }
                     else {
+                        // Update the data in the list
                         angular.forEach($scope.identities, function(value, index) {
                             if (value.Id == identity.Id) {
                                 $scope.identities[index] = identity;
@@ -142,6 +150,7 @@
                 });
             };
 
+            // Delete Identity
             $scope.delete = function(identity){
                 $http.post('/identity/delete', {Id: identity.Id}).
                     success(function (data) {
@@ -155,14 +164,19 @@
             };
         });
 
+        // Indentity Edit Ctrl
         app.controller('IdentityEditCtrl', function ($scope, $http, $modalInstance, identity, action) {
             $scope.action = action;
             $scope.identity = identity;
 
+            // Save Identity
             $scope.save = function () {
                 $http.post('/identity/save', $scope.identity).
                     success(function (data) {
+                        // Set identity id from response
                         $scope.identity.Id = data;
+
+                        // Close modal and return the values.
                         $modalInstance.close({
                             identity: $scope.identity,
                             action: action
@@ -170,6 +184,7 @@
                     });
             };
 
+            // Cancel
             $scope.cancel = function () {
                 $modalInstance.dismiss();
             };

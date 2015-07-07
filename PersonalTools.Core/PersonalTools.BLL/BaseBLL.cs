@@ -28,7 +28,7 @@ namespace PersonalTools.BLL
 
         public async virtual Task<T> FindById(string id)
         {
-            return await _collection.Find(Builders<T>.Filter.Eq(it => it.Id, id)).SingleOrDefaultAsync();
+            return await _collection.Find(it => it.Id == id).SingleOrDefaultAsync();
         }
 
         public async virtual Task Insert(T entity)
@@ -43,7 +43,7 @@ namespace PersonalTools.BLL
 
         public async virtual Task Delete(string id)
         {
-            await _collection.DeleteOneAsync(Builders<T>.Filter.Eq(it => it.Id, id));
+            await _collection.DeleteOneAsync(it => it.Id == id);
         }
     }
 }

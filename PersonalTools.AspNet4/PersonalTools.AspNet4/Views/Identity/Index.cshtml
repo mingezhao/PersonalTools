@@ -6,7 +6,7 @@
     <section>
         <h1 class="page-header">Identities</h1>
         <p class="text-muted">
-            <button class="btn btn-primary" ng-click="insert()">添加</button>
+            <button class="btn btn-primary" ng-click="insert()"><i class="glyphicon glyphicon-plus"></i>&nbsp;添加</button>
         </p>
         <table class="table table-bordered table-hover">
             <thead>
@@ -29,7 +29,7 @@
                     <td>{{identity.Website}}</td>
                     <td>{{identity.Comments}}</td>
                     <td class="text-center">
-                        <button class="btn btn-primary btn-xs" ng-click="edit(identity)" title="修改"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <button class="btn btn-primary btn-xs" ng-click="edit(identity)" title="修改"><i class="glyphicon glyphicon-edit"></i></button>
                         <button class="btn btn-danger btn-xs" ng-click="delete(identity)" title="删除"><i class="glyphicon glyphicon-remove"></i></button>
                     </td>
                 </tr>
@@ -83,14 +83,14 @@
         
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" hs-button-submit="{form:'editForm', fn:'save()'}">Save</button>
-        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        <button class="btn btn-primary" hs-button-submit="{form:'editForm', fn:'save()'}"><i class="glyphicon glyphicon-save"></i>&nbsp;保持</button>
+        <button class="btn btn-warning" ng-click="cancel()"><i class="glyphicon glyphicon-off"></i>&nbsp;放弃</button>
     </div>
 </script>
 @section scripts
 {
     <script>
-        var app = angular.module('ngApp', ['ui.bootstrap', 'hs.validate']);
+        var app = angular.module('ngApp', ['ui.bootstrap', 'happy.suits']);
 
         // Identity Ctrl
         app.controller('IdentityCtrl', function ($scope, $http, $modal) {
